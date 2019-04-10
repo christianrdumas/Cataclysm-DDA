@@ -274,7 +274,7 @@ class game
         );
 
         /** Helper for explosion, does the actual blast. */
-        void do_blast( const tripoint &p, float power, float factor, bool fire );
+        void do_blast( const tripoint &p, float power, float factor, bool fire, int dir );
 
         /*
          * Emits shrapnel damaging creatures and sometimes terrain/furniture within range
