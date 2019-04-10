@@ -614,6 +614,23 @@ static void smash()
         }
     }
 
+    shrapnel_data shrap;
+    explosion_data data;
+    data.power = 500.0;
+    data.distance_factor = 0.9;
+    data.fire = false;
+    data.shrapnel = shrap;
+    if (smashp.x < u.posx())
+        data.direction = 1;
+    else if (smashp.x > u.posx())
+        data.direction = 2;
+    else if (smashp.y > u.posy())
+        data.direction = 3;
+    else if (smashp.y < u.posy())
+        data.direction = 4;
+
+    g->explosion(smashp, data);
+
     didit = m.bash( smashp, smashskill, false, false, smash_floor ).did_bash;
     if( didit ) {
         u.handle_melee_wear( u.weapon );

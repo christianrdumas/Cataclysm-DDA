@@ -63,7 +63,7 @@ shrapnel_data load_shrapnel_data( JsonObject &jo )
 
 // (C1001) Compiler Internal Error on Visual Studio 2015 with Update 2
 void game::do_blast( const tripoint &p, const float power,
-                     const float distance_factor, const bool fire )
+                     const float distance_factor, const bool fire, int dir )
 {
     const float tile_dist = 1.0f;
     const float diag_dist = trigdist ? 1.41f * tile_dist : 1.0f * tile_dist;
@@ -72,9 +72,65 @@ void game::do_blast( const tripoint &p, const float power,
     // 1 . 2
     // 6 4 8
     // 9 and 10 are up and down
-    static const int x_offset[10] = { -1, 1,  0, 0,  1, -1, -1, 1, 0, 0  };
-    static const int y_offset[10] = {  0, 0, -1, 1, -1,  1, -1, 1, 0, 0  };
-    static const int z_offset[10] = {  0, 0,  0, 0,  0,  0,  0, 0, 1, -1 };
+    int x_offset[10] = { -1, 1,  0, 0,  1, -1, -1, 1, 0, 0 };
+    int y_offset[10] = { 0, 0, -1, 1, -1,  1, -1, 1, 0, 0 };
+    int z_offset[10] = { 0, 0,  0, 0,  0,  0,  0, 0, 1, -1 };
+    switch (dir)
+    {
+    default:
+    case 0:
+    {
+        break;
+    }    
+    case 1:
+    {
+        x_offset[1] = 0;
+        x_offset[4] = 0;
+        x_offset[7] = 0;
+
+        y_offset[2] = 0;
+        y_offset[3] = 0;
+        y_offset[4] = 0;
+        y_offset[7] = 0;
+        break;
+    }    
+    case 2:
+    {
+        x_offset[0] = 0;
+        x_offset[5] = 0;
+        x_offset[6] = 0;
+
+        y_offset[2] = 0;
+        y_offset[3] = 0;
+        y_offset[5] = 0;
+        y_offset[6] = 0;
+        break;
+    }    
+    case 3:
+    {
+        x_offset[0] = 0;
+        x_offset[1] = 0;
+        x_offset[4] = 0;
+        x_offset[6] = 0;
+
+        y_offset[2] = 0;
+        y_offset[4] = 0;
+        y_offset[6] = 0;
+        break;
+    }    
+    case 4:
+    {
+        x_offset[0] = 0;
+        x_offset[1] = 0;
+        x_offset[5] = 0;
+        x_offset[7] = 0;
+
+        y_offset[3] = 0;
+        y_offset[5] = 0;
+        y_offset[7] = 0;
+        break;
+    }
+    }
     const size_t max_index = m.has_zlevels() ? 10 : 8;
 
     m.bash( p, fire ? power : ( 2 * power ), true, false, false );
@@ -298,7 +354,7 @@ void game::explosion( const tripoint &p, const explosion_data &ex )
     } else if( ex.distance_factor > 0.0f && ex.power > 0.0f ) {
         // Power rescaled to mean grams of TNT equivalent, this scales it roughly back to where
         // it was before until we re-do blasting power to be based on TNT-equivalent directly.
-        do_blast( p, ex.power / 15.0, ex.distance_factor, ex.fire );
+        do_blast( p, ex.power / 15.0, ex.distance_factor, ex.fire, ex.direction );
     }
 
     const auto &shr = ex.shrapnel;
